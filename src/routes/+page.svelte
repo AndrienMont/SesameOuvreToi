@@ -1,2 +1,23 @@
-<h1>SesameOuvreToi</h1>
-<p>Entrée sur le campus du Bourget du lac</p>
+<script lang="ts">
+    import Header from "./header.svelte";
+
+    async function fetchUser(){
+        
+    }
+
+    async function fetchBuildings(){
+        
+    }
+
+    async function listUsersBuildings(){
+        
+    }
+
+    async function fetchUserBuildings(){
+        
+    }
+</script>
+
+    
+<Header />
+
