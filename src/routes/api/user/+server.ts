@@ -7,13 +7,23 @@ export async function POST({request}){
 
     const db = client.db('sesameOuvreToi').collection('users');
 
-    const {username, identifiant, buildings} = request.body;
+    const data = await request.json();
 
-    
+    const {"name" : username, "uid" : identifiant, "role": role} = data;
+
+    const req = await db.insertOne({"username":username, "identifiant":identifiant, "role":role});
+
+    const responseBody = JSON.stringify(req);
+
+    return new Response(responseBody);
 }
 
 
 
 export async function GET({request}){
     const db = client.db('sesameOuvreToi').collection('users');
+
+    const users = await db.find().toArray();
+
+    return new Response(JSON.stringify(users));
 }
