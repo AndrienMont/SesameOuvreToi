@@ -24,3 +24,19 @@ export async function GET({request}){
 
     return new Response(JSON.stringify(buildings));
 }
+
+
+export async function DELETE({request}){
+    const collection = client.db('sesameOuvreToi').collection('buildings');
+
+    const data = await request.json();
+
+    const {"name" : name} = data;
+    console.log(name);
+
+    const req = await collection.deleteOne({"name":name});
+
+    const responseBody = JSON.stringify(req);
+
+    return new Response(responseBody);
+}

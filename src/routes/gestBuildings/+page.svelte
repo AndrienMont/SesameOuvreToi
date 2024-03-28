@@ -1,16 +1,34 @@
 <script lang="ts">
     import Header from "../header.svelte";
+    import TabBuilding from "../components/TabBuilding.svelte";
+    import AddBuilding from "../components/AddBuilding.svelte";
+    import { onMount } from 'svelte';
 
-    function gotoAddBuilds() {
-        window.location.href = "/addBuilds";
+    let buildings : any[] = [];
+
+    async function getAllBuildings() {
+        const res = await fetch('./api/buildings')
+            .then((res) => res.json())
+            .then((data) => {
+                buildings = data;
+            });
     }
+
+    onMount(() => {
+        getAllBuildings();
+    });
+
+    function removeBuilding(event: any){
+        // buildings = getAllBuildings();
+        buildings = buildings.filter((building) => building.name !== event.detail.name);
+    }
+
 </script>
 
 <Header />
 
 <h2>Batiments</h2>
 
-<button on:click={gotoAddBuilds}>Ajouter un batiment</button>
 <table>
     <thead>
         <tr>
@@ -19,12 +37,9 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>8C </td>
-            <td>
-                <button>Modifier</button>
-                <button>Supprimer</button>
-            </td>
-        </tr>
+        {#each buildings as building}
+            <TabBuilding {building} on:delete={removeBuilding}/>
+        {/each}
+        <AddBuilding />
     </tbody>
 </table>

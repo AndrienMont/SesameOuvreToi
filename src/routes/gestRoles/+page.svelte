@@ -1,5 +1,6 @@
 <script lang="ts">
     import Header from "../header.svelte";
+    import AddRole from "../components/AddRole.svelte";
 
     function gotoAddRole() {
         window.location.href = "/addRoles";
@@ -30,3 +31,5 @@
         </tr>
     </tbody>
 </table>
+
+<AddRole />

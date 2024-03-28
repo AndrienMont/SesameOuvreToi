@@ -1,7 +1,23 @@
 <script lang="ts">
+	import AddUser from "../components/AddUser.svelte";
+	import TabUser from "../components/TabUser.svelte";
     import Header from "../header.svelte";
-    function goToAddUsers() {
-        window.location.href = "/addUsers";
+    import { onMount } from 'svelte';
+
+    let users: any[] = [];
+    async function getAllUsers() {
+        const response = await fetch("./api/user")
+            .then((res) => res.json())
+            .then((data) => {
+                users = data;
+                console.log(users);
+            });
+    }
+    onMount(() => {
+        getAllUsers();
+    });
+    function removeUser(event: any){
+        users = users.filter((user) => user.name !== event.detail.name);
     }
 
 </script>
@@ -10,25 +26,16 @@
 
 <h2>Gestion des utilisateurs</h2>
 
-<button on:click={goToAddUsers}>Ajouter un utilisateur</button>
 <table>
     <tr>
         <th>Id</th>
         <th>Nom</th>
         <th>Prénom</th>
-        <th>Email</th>
         <th>Role</th>
         <th>Actions</th>
     </tr>
-    <tr>
-        <td>1</td>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john.doe@univ-smb.fr</td>
-        <td>Admin</td>
-        <td>
-            <button>Modifier</button>
-            <button>Supprimer</button>
-        </td>
-    </tr>
+    {#each users as user}
+        <TabUser {user} on:delete={removeUser}/>
+    {/each}
+    <AddUser />
 </table>

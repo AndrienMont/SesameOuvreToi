@@ -9,15 +9,28 @@ export async function POST({request}){
 
     const data = await request.json();
 
-    const {"name" : username, "uid" : identifiant, "role": role} = data;
+    const {"name" : username,"surname": familly, "uid" : identifiant, "role": role} = data;
 
-    const req = await db.insertOne({"username":username, "identifiant":identifiant, "role":role});
+    const req = await db.insertOne({"name":username, "surname":familly, "identifiant":identifiant, "role":role});
 
     const responseBody = JSON.stringify(req);
 
     return new Response(responseBody);
 }
 
+export async function DELETE({request}){
+    const db = client.db('sesameOuvreToi').collection('users');
+
+    const data = await request.json();
+
+    const {"name" : username, "surname": familly} = data;
+
+    const req = await db.deleteOne({"name":username, "surname":familly});
+
+    const responseBody = JSON.stringify(req);
+
+    return new Response(responseBody);
+}
 
 
 export async function GET({request}){
