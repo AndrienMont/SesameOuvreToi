@@ -3,7 +3,8 @@
     const dispatch = createEventDispatcher();
 
     export let building = {
-        name : String
+        name : String,
+        users: Array
     }; 
 
     async function deleteBuilding() {
@@ -12,7 +13,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"name" : building.name})
+            body: JSON.stringify({"name" : building.name, "newUsers" : building.users})
         });
         if(response.ok){
             dispatch('delete', building);
@@ -22,6 +23,7 @@
 
 <tr>
     <td>{building.name}</td>
+    <td>{building.users}</td>
     <td>
         <button on:click={deleteBuilding}>Supprimer</button>
     </td>

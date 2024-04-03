@@ -10,7 +10,7 @@ export async function POST({request}){
 
     const {"name": name} = data;
 
-    const req = await collection.insertOne({"name":name});
+    const req = await collection.insertOne({"name":name, "users": []});
 
     const responseBody = JSON.stringify(req);
 
@@ -35,6 +35,20 @@ export async function DELETE({request}){
     console.log(name);
 
     const req = await collection.deleteOne({"name":name});
+
+    const responseBody = JSON.stringify(req);
+
+    return new Response(responseBody);
+}
+
+export async function PUT({request}){
+    const collection = client.db('sesameOuvreToi').collection('buildings');
+
+    const data = await request.json();
+
+    const {"name" : name, "newUsers" : newUsers} = data;
+
+    const req = await collection.updateOne({"name":name}, {$set: {"users": newUsers}});
 
     const responseBody = JSON.stringify(req);
 

@@ -7,7 +7,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({name})
+            body: JSON.stringify({"name" : name, "newUsers" :[]})
         });
         if (response.ok) {
             window.location.reload();

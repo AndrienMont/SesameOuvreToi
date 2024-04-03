@@ -26,3 +26,17 @@ export async function GET({request}){
 
     return new Response(responseBody);
 }
+
+export async function DELETE({request}){
+    const collection = client.db('sesameOuvreToi').collection('roles');
+
+    const data = await request.json();
+
+    const {"role": role} = data;
+
+    const req = await collection.deleteOne({"role":role});
+
+    const responseBody = JSON.stringify(req);
+
+    return new Response(responseBody);
+}

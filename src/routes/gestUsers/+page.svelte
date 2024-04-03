@@ -1,7 +1,7 @@
 <script lang="ts">
 	import AddUser from "../components/AddUser.svelte";
 	import TabUser from "../components/TabUser.svelte";
-    import Header from "../header.svelte";
+    import Header from "../components/header.svelte";
     import { onMount } from 'svelte';
 
     let users: any[] = [];

@@ -1,17 +1,32 @@
 <script lang="ts">
-    import Header from "../header.svelte";
+    import Header from "../components/header.svelte";
     import AddRole from "../components/AddRole.svelte";
+    import TabRole from "../components/TabRole.svelte";
+    import { onMount } from 'svelte';
 
-    function gotoAddRole() {
-        window.location.href = "/addRoles";
+    let roles: any[] = [];
+    async function getAllRoles() {
+        const response = await fetch("./api/role")
+            .then((res) => res.json())
+            .then((data) => {
+                roles = data;
+                console.log(roles);
+            });
     }
+
+    function removeRole(event: any){
+        roles = roles.filter((role) => role.name !== event.detail.name);
+    }
+
+    onMount(() => {
+        getAllRoles();
+    });
 </script>
 
 <Header />
 
 <h2>Roles</h2>
 
-<button on:click={gotoAddRole}>Ajouter un role</button>
 <table>
     <thead>
         <tr>
@@ -20,16 +35,9 @@
             <th>Actions</th>
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>Admin</td>
-            <td>8C </td>
-            <td>
-                <button>Modifier</button>
-                <button>Supprimer</button>
-            </td>
-        </tr>
-    </tbody>
+    {#each roles as role}
+        <TabRole {role} on:delete={removeRole}/>
+    {/each}
 </table>
 
 <AddRole />
