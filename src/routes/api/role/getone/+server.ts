@@ -3,7 +3,7 @@ import {SECRET_MONGO_URL} from '$env/static/private'
 
 const client = new MongoClient(SECRET_MONGO_URL);
 
-export async function GET({request}){
+export async function POST({request}){
     const collection = client.db('sesameOuvreToi').collection('roles');
 
     const data = await request.json();

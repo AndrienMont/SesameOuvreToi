@@ -24,7 +24,7 @@
             .then(data => {
                 data.forEach(building =>{
                     const option = document.createElement('option');
-                    option.value = building;
+                    option.value = building.name;
                     option.text = building.name;
                     document.querySelector('#buildings')?.appendChild(option);
                 })
@@ -43,6 +43,7 @@
     let users2: { name: string, value: string }[] = [];
     let users3: { name: string, value: string }[] = [];
     let isDoorOpen = false;
+    let selectedBuilding = '';
 
 function handleDragStart(event, user, sourceList) {
     event.dataTransfer.setData('text/plain', JSON.stringify(user));
@@ -79,6 +80,10 @@ function handleDrop(event, targetList) {
     scanBadge(userData);
 }
 
+function handleChangeSelectedBuilding(event){
+    selectedBuilding = event.target.value;
+}
+
 
     function addUsers(){
         const select = document.querySelector('#users') as HTMLSelectElement;
@@ -97,10 +102,40 @@ function handleDrop(event, targetList) {
     onMount(() => {
         fetchUser();
         fetchBuildings();
+        const buildingSelect = document.querySelector('#buildings') as HTMLSelectElement;
+        buildingSelect.addEventListener('change', handleChangeSelectedBuilding);
     });
 
-    function scanBadge(data: any){
-        console.log(JSON.parse(data.value).role);
+    async function scanBadge(data: any){
+        /*
+        Recupérer le rôle du gars scanné
+        Vérifier ses permissions
+        Ouvrir la porte + led verte pdt 5 secs + ouverture porte 30 secondes 
+        ou 
+        déclencer led rouge 10 secs + porte bloquée (alert ?)
+        */
+        const role = JSON.parse(data.value).role;
+        
+        var building = selectedBuilding;
+        // console.log(building);
+
+        var authorization =  await fetch('./api/role/getone', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({role: role})
+        })
+        .then(response => response.json())
+            .then(data => {
+                if(data.buildings.includes(building)){
+                    isDoorOpen = true;
+                }else{
+                    alert('Accès refusé');
+                }
+            });
+            await new Promise(r => setTimeout(r, 30000));
+            isDoorOpen = false;
         
     }
 
@@ -111,6 +146,7 @@ function handleDrop(event, targetList) {
     function alertTest(){
         alert('Nuke incoming !');
     }
+
 
 
 </script>
@@ -126,9 +162,20 @@ function handleDrop(event, targetList) {
 <button on:click={openDoor}>Ouvrir/fermer la porte</button>
 
 <h2>Liste des batiments</h2>
-<select id="buildings"></select>
+<select id="buildings">
+    <option value="0">Choisir un batiment</option>
+</select>
 
 <h2>Zone de passage</h2>
+
+<div class="greenLed">
+
+</div>
+
+<div class="redLed">
+
+</div>
+
 
 
 <div class="container">
@@ -160,14 +207,16 @@ function handleDrop(event, targetList) {
     </div>
         
 
-    <ul class="list" on:drop={(e) => handleDrop(e, 'users3')} on:dragover={allowDrop}>
-        <h2>Intérieur du bâtiment</h2>
-        {#each users3 as user}
-            <li draggable="true" on:dragstart={(e) => handleDragStart(e, user, 'users3')}>
-                {user.name}
-            </li>
-        {/each}
-    </ul>
+    {#if isDoorOpen}
+        <ul class="list" on:drop={(e) => handleDrop(e, 'users3')} on:dragover={allowDrop}>
+            <h2>Intérieur du bâtiment</h2>
+            {#each users3 as user}
+                <li draggable="true" on:dragstart={(e) => handleDragStart(e, user, 'users3')}>
+                    {user.name}
+                </li>
+            {/each}
+        </ul>
+    {/if}
 </div>
 
 
@@ -208,6 +257,24 @@ si count = 1, vérification personne entrée même que badge
     margin: 5px;
     background-color: #f0f0f0;
     cursor: pointer;
+}
+
+.greenLed {
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    border-radius: 50%;
+    margin: 10px;
+    opacity: 0.25;
+}
+
+.redLed {
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    border-radius: 50%;
+    margin: 10px;
+    opacity: 0.25;
 }
 
 </style>
