@@ -5,6 +5,9 @@
     import ferme from "../assets/interrupteur-ferme.png";
     import ouvert from "../assets/interrupteur-ouvert.png";
 
+    let badgeScanner = 0;
+    let laz : boolean = false;
+
     async function fetchUser(){
         var users = await fetch('./api/user')
         .then(response => response.json())
@@ -73,11 +76,12 @@ function handleDrop(event, targetList) {
         users = [...users, userData];
     } else if (targetList === 'users2') {
         users2 = [...users2, userData];
+        scanBadge(userData);
     } else if (targetList === 'users3') {
         users3 = [...users3, userData];
     }
 
-    scanBadge(userData);
+    
 }
 
 function handleChangeSelectedBuilding(event){
@@ -129,14 +133,31 @@ function handleChangeSelectedBuilding(event){
         .then(response => response.json())
             .then(data => {
                 if(data.buildings.includes(building)){
+                    ledGreen();
                     isDoorOpen = true;
+                    badgeScanner++;
                 }else{
-                    alert('Accès refusé');
+                    ledRed();
+                    //alert('Accès refusé');
                 }
             });
             await new Promise(r => setTimeout(r, 30000));
             isDoorOpen = false;
         
+    }
+
+    async function ledGreen(){
+        const greenLed = document.querySelector('.greenLed') as HTMLElement;
+        greenLed.style.opacity = '1';
+        await new Promise(r => setTimeout(r, 5000));
+        greenLed.style.opacity = '0.25';
+    }
+
+    async function ledRed(){
+        const redLed = document.querySelector('.redLed') as HTMLElement;
+        redLed.style.opacity = '1';
+        await new Promise(r => setTimeout(r, 10000));
+        redLed.style.opacity = '0.25';
     }
 
     function openDoor(){
@@ -147,7 +168,49 @@ function handleChangeSelectedBuilding(event){
         alert('Nuke incoming !');
     }
 
+    function lazer(){
+        // Alert si plsu de personnes que de scann dans le batiment 
+        if(badgeScanner < users3.length){
+            alert('Alerte !');
+            return false;
+        }
+        return true;
+    }
 
+    async function addListings(user: any){
+        console.log("user : ", user);
+        const building = selectedBuilding;
+        const listing = await fetch('./api/buildings/addUser',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({name : building ,user: user})
+        } 
+        )
+        console.log(listing);
+    }
+
+    function onFire(){
+        const building = selectedBuilding;
+        fetch('./api/buildings/fire',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({name : building})
+        } 
+        )
+        .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 
 </script>
 
@@ -165,6 +228,7 @@ function handleChangeSelectedBuilding(event){
 <select id="buildings">
     <option value="0">Choisir un batiment</option>
 </select>
+<button on:click={onFire}>Foutre le feu</button>
 
 <h2>Zone de passage</h2>
 
@@ -208,13 +272,16 @@ function handleChangeSelectedBuilding(event){
         
 
     {#if isDoorOpen}
-        <ul class="list" on:drop={(e) => handleDrop(e, 'users3')} on:dragover={allowDrop}>
+        <ul class="list" on:drop={(e) => {handleDrop(e, 'users3'); laz = lazer()}} on:dragover={allowDrop}>
             <h2>Intérieur du bâtiment</h2>
-            {#each users3 as user}
-                <li draggable="true" on:dragstart={(e) => handleDragStart(e, user, 'users3')}>
-                    {user.name}
-                </li>
-            {/each}
+            {#if laz}
+                {#each users3 as user}
+                    <li draggable="true" on:dragstart={(e) => 
+                            handleDragStart(e, user, 'users3')}>
+                        {user.name}
+                    </li>
+                {/each}
+            {/if}
         </ul>
     {/if}
 </div>
