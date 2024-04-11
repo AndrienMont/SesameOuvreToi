@@ -23,7 +23,11 @@
 
 <tr>
     <td>{building.name}</td>
-    <td>{building.users}</td>
+    <td>
+        {#each building.users as user (user.id)}
+            {user.name} <br>
+        {/each}
+    </td>
     <td>
         <button on:click={deleteBuilding}>Supprimer</button>
     </td>

@@ -3,8 +3,8 @@
 
     function addUser() {
         //event.preventDefault();
-        const nom = document.querySelector("input[name=nom]") as HTMLInputElement;
-        const prenom = document.querySelector("input[name=prenom]") as HTMLInputElement;
+        const surname = document.querySelector("input[name=nom]") as HTMLInputElement;
+        const name = document.querySelector("input[name=prenom]") as HTMLInputElement;
         const role = document.querySelector("select") as HTMLSelectElement;
         const uid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -13,8 +13,8 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "name" : nom.value,
-                                    "surname" : prenom.value,
+            body: JSON.stringify({ "name" : name.value,
+                                    "surname" : surname.value,
                                     "uid" : uid,
                                     "role" : role.value})
         })

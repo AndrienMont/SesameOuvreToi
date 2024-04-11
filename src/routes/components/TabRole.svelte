@@ -3,7 +3,7 @@
     const dispatch = createEventDispatcher();
 
     export let role = {
-        name : String,
+        role : String,
         buildings : Array
     }
 
@@ -13,7 +13,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"name" : role.name})
+            body: JSON.stringify({"role" : role.role})
         });
         if(response.ok){
             dispatch('delete', role);

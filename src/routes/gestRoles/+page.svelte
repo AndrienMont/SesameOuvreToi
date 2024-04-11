@@ -4,18 +4,20 @@
     import TabRole from "../components/TabRole.svelte";
     import { onMount } from 'svelte';
 
-    let roles: any[] = [];
+    let roles: {
+        role : String;
+        buildings : Array<String>
+    }[]=[];
     async function getAllRoles() {
         const response = await fetch("./api/role")
             .then((res) => res.json())
             .then((data) => {
-                roles = data;
-                console.log(roles);
+                roles = data
             });
     }
 
     function removeRole(event: any){
-        roles = roles.filter((role) => role.name !== event.detail.name);
+        roles = roles.filter((role) => role.role !== event.detail.role);
     }
 
     onMount(() => {

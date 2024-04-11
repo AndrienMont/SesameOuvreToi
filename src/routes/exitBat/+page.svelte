@@ -1,25 +1,41 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-    import Header from "./components/header.svelte";
+    import Header from "../components/header.svelte";
     import { flip } from "svelte/animate";
-    import ferme from "../assets/interrupteur-ferme.png";
-    import ouvert from "../assets/interrupteur-ouvert.png";
+    import ferme from "../../assets/interrupteur-ferme.png";
+    import ouvert from "../../assets/interrupteur-ouvert.png";
 
     let badgeScanner = 0;
     let laz : boolean = false;
     let usersInBuilding : any[] = [];
 
     async function fetchUser(){
-        var users = await fetch('./api/user')
+        const building = selectedBuilding;
+        const users = await fetch('./api/buildings/fire',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({name : building})
+        } 
+        )
         .then(response => response.json())
             .then(data => {
-                data.forEach(user =>{
-                    const option = document.createElement('option');
-                    option.value = JSON.stringify(user);
-                    option.text = user.surname + ' ' + user.name;
-                    document.querySelector('#users')?.appendChild(option);
-                })
+                usersInBuilding = data[0].users;
+                //console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
+        if(usersInBuilding.length != 0){
+            for(let i = 0; i < usersInBuilding.length; i++){
+                const option = document.createElement('option');
+                option.value = JSON.stringify(usersInBuilding[i]);
+                option.text = usersInBuilding[i].name;
+                document.querySelector('#users')?.appendChild(option);
+            }
+        }
     }
 
     async function fetchBuildings(){
@@ -33,14 +49,6 @@
                     document.querySelector('#buildings')?.appendChild(option);
                 })
             });
-    }
-
-    async function listUsersBuildings(){
-        
-    }
-
-    async function fetchUserBuildings(){
-        
     }
 
     let users: { name: string, value: string }[] = [];
@@ -81,12 +89,13 @@ function handleDrop(event, targetList) {
     } else if (targetList === 'users3') {
         users3 = [...users3, userData];
     }
-    removeListings(userData);
+    addListings(userData);
     
 }
 
 function handleChangeSelectedBuilding(event){
     selectedBuilding = event.target.value;
+    fetchUser();
 }
 
     function addUsers(){
@@ -104,8 +113,11 @@ function handleChangeSelectedBuilding(event){
     }
 
     onMount(() => {
-        fetchUser();
         fetchBuildings();
+        selectedBuilding = "8b"
+        console.log(selectedBuilding);
+        fetchUser();
+        
         const buildingSelect = document.querySelector('#buildings') as HTMLSelectElement;
         buildingSelect.addEventListener('change', handleChangeSelectedBuilding);
     });
@@ -118,31 +130,9 @@ function handleChangeSelectedBuilding(event){
         ou 
         déclencer led rouge 10 secs + porte bloquée (alert ?)
         */
-        const role = JSON.parse(data.value).role;
-        const statusBadge = JSON.parse(data.value).enabled;
-        
-        var building = selectedBuilding;
-        // console.log(building);
-
-        var authorization =  await fetch('./api/role/getone', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({role: role})
-        })
-        .then(response => response.json())
-            .then(data => {
-                if(data.buildings.includes(building) && statusBadge){
-                    ledGreen();
-                    isDoorOpen = true;
-                    badgeScanner++;
-                    closeDoor();
-                }else{
-                    ledRed();
-                    //alert('Accès refusé');
-                }
-            });
+        ledGreen();
+        isDoorOpen = true;
+        badgeScanner++;
         
     }
 
@@ -182,10 +172,10 @@ function handleChangeSelectedBuilding(event){
         return true;
     }
 
-    async function removeListings(user: any){
+    async function addListings(user: any){
         console.log("user : ", user);
         const building = selectedBuilding;
-        const listing = await fetch('./api/buildings/addUser',
+        const listing = await fetch('./api/buildings/supressUser',
         {
             method: 'POST',
             headers: {
@@ -268,7 +258,7 @@ function handleChangeSelectedBuilding(event){
 
 <div class="container">
     <ul class="list" on:drop={(e) => handleDrop(e, 'users')} on:dragover={allowDrop}>
-        <h2>Entrée du bâtiment</h2>
+        <h2>Sortie du bâtiment</h2>
         {#each users as user}
             <li draggable="true" on:dragstart={(e) => handleDragStart(e, user, 'users')}>
                 {user.name}
@@ -297,7 +287,7 @@ function handleChangeSelectedBuilding(event){
 
     {#if isDoorOpen || users3.length > 0}
         <ul class="list" on:drop={(e) => {handleDrop(e, 'users3'); laz = lazer()}} on:dragover={allowDrop}>
-            <h2>Intérieur du bâtiment</h2>
+            <h2>Extérieur du bâtiment</h2>
             {#if laz}
                 {#each users3 as user}
                     <li draggable="true" on:dragstart={(e) => 

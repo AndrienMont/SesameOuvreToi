@@ -20,6 +20,14 @@
         users = users.filter((user) => user.name !== event.detail.name);
     }
 
+    function disableUser(event: any){
+        location.reload();
+    }
+
+    function enableUser(event: any){
+        location.reload();
+    }
+
 </script>
 <Header />
 
@@ -32,10 +40,11 @@
         <th>Nom</th>
         <th>Prénom</th>
         <th>Role</th>
+        <th>Statut badge</th>
         <th>Actions</th>
     </tr>
     {#each users as user}
-        <TabUser {user} on:delete={removeUser}/>
+        <TabUser {user} on:delete={removeUser} on:disable={disableUser} on:enable={enableUser}/>
     {/each}
     <AddUser />
 </table>

@@ -11,7 +11,7 @@ export async function POST({request}){
 
     const {"name" : username,"surname": familly, "uid" : identifiant, "role": role} = data;
 
-    const req = await db.insertOne({"name":username, "surname":familly, "identifiant":identifiant, "role":role});
+    const req = await db.insertOne({"name":username, "surname":familly, "identifiant":identifiant, "role":role, "enabled":true});
 
     const responseBody = JSON.stringify(req);
 

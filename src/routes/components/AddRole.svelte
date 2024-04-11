@@ -6,7 +6,7 @@
 
 
     function addRole() {
-        event.preventDefault();
+        //event.preventDefault();
         const role = document.querySelector('#role')?.value;
         console.log(role,selectedBuildings);
         
@@ -25,6 +25,7 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+        location.reload();
     }
 
     function displayBuildings(){
