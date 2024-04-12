@@ -59,7 +59,7 @@
     <td id="surname">{user.surname}</td>
     <td id="name">{user.name}</td>
     <td>{user.role}</td>
-    <td>
+    <td class:disabled={!user.enabled}>
         {#if user.enabled}
             Activé
         {:else}
@@ -79,3 +79,36 @@
         <!-- <button on:click={enableBadge}>Activer le badge</button> -->
     </td>
 </tr>
+
+<style>
+    /* Table row */
+tr {
+    border-bottom: 1px solid #ccc; /* Add a border between rows */
+}
+
+/* Table data */
+td {
+    padding: 8px; /* Add padding to the table data */
+}
+
+/* Button */
+button {
+    padding: 8px 16px;
+    background-color: #007bff; /* Blue color for buttons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px; /* Add a small margin between buttons */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Disabled state text */
+.disabled {
+    color: #999; /* Light gray color for disabled state */
+}
+
+</style>

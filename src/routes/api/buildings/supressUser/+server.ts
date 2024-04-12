@@ -11,3 +11,22 @@ export async function POST({request}){
     const responseBody = JSON.stringify(req);
     return new Response(responseBody);
 }
+
+export async function DELETE({request}){
+    const collection = client.db('sesameOuvreToi').collection('buildings');
+    const url = new URL(request.url);
+    const userDelete = url.searchParams.get('user');
+    const building = url.searchParams.get('building');
+    const req = await collection.find({name: building}).toArray();
+    const users = req[0].users;
+    const newUsers : any[] = []; 
+    users.forEach(user => {
+        if(user.name !== userDelete){
+            newUsers.push(user);
+        }
+    });
+    const req2 = await collection.updateOne({name: building}, {$set: {users: newUsers}});
+
+    const responseBody = JSON.stringify(req);
+    return new Response(responseBody);
+}

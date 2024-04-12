@@ -70,3 +70,31 @@
         <button on:click={addRole}>Ajouter</button>
     </td>
 </tr>
+
+<style>
+   /* Input field */
+input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Button */
+button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+</style>

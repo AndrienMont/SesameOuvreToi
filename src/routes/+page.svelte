@@ -81,7 +81,7 @@ function handleDrop(event, targetList) {
     } else if (targetList === 'users3') {
         users3 = [...users3, userData];
     }
-    removeListings(userData);
+    if(lazer())addListings(userData);
     
 }
 
@@ -182,7 +182,7 @@ function handleChangeSelectedBuilding(event){
         return true;
     }
 
-    async function removeListings(user: any){
+    async function addListings(user: any){
         console.log("user : ", user);
         const building = selectedBuilding;
         const listing = await fetch('./api/buildings/addUser',
@@ -243,7 +243,7 @@ function handleChangeSelectedBuilding(event){
 <select id="buildings">
     <option value="0">Choisir un batiment</option>
 </select>
-<button on:click={onFire}>Foutre le feu</button>
+<button id="fireButton" on:click={onFire}>Allumer le feu</button>
 
 <h2> Personnes présentes dans le batiment : </h2>
 <ul>
@@ -296,7 +296,7 @@ function handleChangeSelectedBuilding(event){
         
 
     {#if isDoorOpen || users3.length > 0}
-        <ul class="list" on:drop={(e) => {handleDrop(e, 'users3'); laz = lazer()}} on:dragover={allowDrop}>
+        <ul class="list" on:drop={(e) => {handleDrop(e, 'users3')}} on:dragover={allowDrop}>
             <h2>Intérieur du bâtiment</h2>
             {#if laz}
                 {#each users3 as user}
@@ -310,21 +310,6 @@ function handleChangeSelectedBuilding(event){
     {/if}
 </div>
 
-
-<p>Liste des trucs à mettre sur la page d'accueil</p>
-<ul>
-    <li>Sortie du batiment</li>
-</ul>
-
-<!-- 
-Drag and drop pour le passage de porte
-possibilité d'ajouter des users à un groupe (visuel et fonctionnel)
-drag le groupe pour passage de porte
-quand le groupe arrive dans zone de drop, count du nombre de personnes dans le groupe
-si count > 1, alerte
-si count = 1, vérification personne entrée même que badge
-
--->
 
 <style>
 .list {
@@ -360,5 +345,38 @@ si count = 1, vérification personne entrée même que badge
     margin: 10px;
     opacity: 0.25;
 }
+.porte {
+    margin: 10px;
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Selects */
+select {
+    padding: 8px;
+    border-radius: 5px;
+}
+
+/* Fire button */
+#fireButton {
+    background-color: #dc3545;
+}
+
+#fireButton:hover {
+    background-color: #bb2d3b;
+}
+
 
 </style>

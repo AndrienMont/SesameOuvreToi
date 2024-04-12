@@ -28,3 +28,30 @@
         <button on:click={deleteRole}>Supprimer</button>
     </td>
 </tr>
+
+<style>
+    /* Table row */
+tr {
+    border-bottom: 1px solid #ccc; /* Add a border between rows */
+}
+
+/* Table data */
+td {
+    padding: 8px; /* Add padding to the table data */
+}
+
+/* Button */
+button {
+    padding: 8px 16px;
+    background-color: #dc3545; /* Red color for delete button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #bb2d3b; /* Darker red on hover */
+}
+
+</style>
